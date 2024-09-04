@@ -3,8 +3,6 @@ import {
   Card,
   CardContent,
   Typography,
-  Button,
-  Stack,
   Container,
   Divider,
 } from "@mui/material";
@@ -17,7 +15,7 @@ interface FlashcardProps {
   onBacksideShown: () => void;
 }
 
-function Flashcard({
+function FlashcardComponent({
   sideA,
   sideB,
   onPass,
@@ -123,4 +121,4 @@ function Flashcard({
   );
 }
 
-export default Flashcard;
+export default FlashcardComponent;

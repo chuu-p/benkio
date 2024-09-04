@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::schema::{flashcards, reviews};
 
-#[derive(Queryable, Selectable, Insertable, Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Queryable, Selectable, Debug, Serialize, Deserialize, JsonSchema)]
 #[diesel(table_name = crate::schema::flashcards)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Flashcard {
@@ -25,7 +25,7 @@ pub struct NewCard<'a> {
     pub next_review: chrono::NaiveDateTime,
 }
 
-#[derive(Queryable, Selectable, Insertable, Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Queryable, Selectable, Debug, Serialize, Deserialize, JsonSchema)]
 #[diesel(table_name = crate::schema::reviews)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Review {
