@@ -12,15 +12,18 @@ type Flashcard = {
 };
 
 async function getFlashcards(): Promise<Flashcard[]> {
-  let res: string = await invoke("get_flashcards", { amount: 10 });
-  info(`res ${res}`);
-  let parsed: Flashcard[] = JSON.parse(res);
+  let response: string = await invoke("get_flashcards", { amount: 10 });
+  info(`response ${response}`);
+  let parsed: Flashcard[] = JSON.parse(response);
   return parsed;
 }
 
 function FlashcardScreen() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const itemsRef = useRef<Map<number, any>>(null);
+  const [backsideShown, setBacksideShown] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const itemsRef = useRef<Map<number, any> | null>(null);
 
   // Init Cards
   useEffect(() => {
@@ -29,6 +32,15 @@ function FlashcardScreen() {
         info("Fetching flashcards...");
         const cards = await getFlashcards();
         setFlashcards(cards);
+        setBacksideShown(
+          cards.reduce(
+            (acc, card) => {
+              acc[card.id] = false;
+              return acc;
+            },
+            {} as { [key: number]: boolean },
+          ),
+        );
       } catch (error) {
         console.error("Failed to fetch flashcards:", error);
       }
@@ -64,15 +76,29 @@ function FlashcardScreen() {
     removeFlashcardById(flashcardId);
   };
 
+  const handleBacksideShown = (flashcardId: number) => {
+    setBacksideShown((prevState) => ({
+      ...prevState,
+      [flashcardId]: true,
+    }));
+  };
+
   return (
     <>
-      <Container maxWidth="md" className="no-scroll">
+      <Container
+        maxWidth="md"
+        sx={{ "user-select": "none", cursor: "default" }}
+      >
         {flashcards.map((flashcard) => {
           return (
             <TinderCard
               swipeRequirementType="position"
               swipeThreshold={100}
-              preventSwipe={["up", "down"]}
+              preventSwipe={[
+                "up",
+                "down",
+                ...(!backsideShown[flashcard.id] ? ["left", "right"] : []),
+              ]} // Prevent swipe if card sideB has not been shown
               key={flashcard.id}
               ref={(node) => {
                 const map = getMap();
@@ -88,6 +114,7 @@ function FlashcardScreen() {
                 sideB={flashcard.sideB}
                 onPass={async () => await handlePress(flashcard.id, "pass")}
                 onFail={async () => await handlePress(flashcard.id, "fail")}
+                onBacksideShown={() => handleBacksideShown(flashcard.id)}
               />
             </TinderCard>
           );

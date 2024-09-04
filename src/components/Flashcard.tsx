@@ -14,13 +14,21 @@ interface FlashcardProps {
   sideB: string;
   onPass: () => void;
   onFail: () => void;
+  onBacksideShown: () => void;
 }
 
-function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
+function Flashcard({
+  sideA,
+  sideB,
+  onPass,
+  onFail,
+  onBacksideShown,
+}: FlashcardProps) {
   const [showAnswer, setShowAnswer] = useState(false);
 
   const handleShowAnswer = () => {
     setShowAnswer(true);
+    onBacksideShown();
   };
 
   const handlePass = () => {
@@ -53,7 +61,6 @@ function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
                 color="text.secondary"
                 align="center"
                 marginTop="50vw"
-                className="pressable"
               >
                 Tap to show answer
               </Typography>
@@ -71,36 +78,46 @@ function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
               </Typography>
             </>
           )}
-        </CardContent>
-        <Stack
-          direction="row"
-          spacing={2}
-          justifyContent="center"
-          sx={{ padding: 2 }}
-        >
           {!showAnswer ? (
             <></>
           ) : (
             <>
-              <Button
-                variant="contained"
-                color="error"
-                className="pressable"
+              <div
                 onClick={handleFail}
-              >
-                Fail
-              </Button>
-              <Button
-                variant="contained"
-                color="success"
-                className="pressable"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  height: "95%",
+                  width: "50%",
+                  background:
+                    "linear-gradient(to right, rgba(255,0,0,0.1), rgba(0,0,0,0))",
+                  cursor: "pointer",
+                  zIndex: 1,
+                  margin: "20px 20px auto",
+                  padding: 2,
+                  borderRadius: "5px",
+                }}
+              />
+              <div
                 onClick={handlePass}
-              >
-                Pass
-              </Button>
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  height: "95%",
+                  width: "50%",
+                  background:
+                    "linear-gradient(to left, rgba(0,255,0,0.1), rgba(0,0,0,0))",
+                  cursor: "pointer",
+                  zIndex: 1,
+                  margin: "20px 20px auto",
+                  borderRadius: "5px",
+                }}
+              />
             </>
           )}
-        </Stack>
+        </CardContent>
       </Card>
     </Container>
   );
