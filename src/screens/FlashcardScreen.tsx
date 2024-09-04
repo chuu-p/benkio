@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Flashcard from "../components/Flashcard";
-import TinderCard from "react-tinder-card";
+// import TinderCard from "react-tinder-card";
 import { Container } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
 import { debug, info } from "@tauri-apps/plugin-log";
@@ -93,32 +93,32 @@ function FlashcardScreen() {
         <div>0 ? | 1 false | 60 due</div>
         {flashcards.map((flashcard) => {
           return (
-            <TinderCard
-              swipeRequirementType="position"
-              swipeThreshold={100}
-              preventSwipe={[
-                "up",
-                "down",
-                ...(!backsideShown[flashcard.id] ? ["left", "right"] : []),
-              ]} // Prevent swipe if card sideB has not been shown
-              key={flashcard.id}
-              ref={(node) => {
-                const map = getMap();
-                if (node) {
-                  map.set(flashcard.id, node);
-                } else {
-                  map.delete(flashcard.id);
-                }
-              }}
-            >
-              <Flashcard
-                sideA={flashcard.sideA}
-                sideB={flashcard.sideB}
-                onPass={async () => await handlePress(flashcard.id, "pass")}
-                onFail={async () => await handlePress(flashcard.id, "fail")}
-                onBacksideShown={() => handleBacksideShown(flashcard.id)}
-              />
-            </TinderCard>
+            // <TinderCard
+            //   swipeRequirementType="position"
+            //   swipeThreshold={100}
+            //   preventSwipe={[
+            //     "up",
+            //     "down",
+            //     ...(!backsideShown[flashcard.id] ? ["left", "right"] : []),
+            //   ]} // Prevent swipe if card sideB has not been shown
+            //   key={flashcard.id}
+            //   ref={(node) => {
+            //     const map = getMap();
+            //     if (node) {
+            //       map.set(flashcard.id, node);
+            //     } else {
+            //       map.delete(flashcard.id);
+            //     }
+            //   }}
+            // >
+            <Flashcard
+              sideA={flashcard.sideA}
+              sideB={flashcard.sideB}
+              onPass={async () => await handlePress(flashcard.id, "pass")}
+              onFail={async () => await handlePress(flashcard.id, "fail")}
+              onBacksideShown={() => handleBacksideShown(flashcard.id)}
+            />
+            // </TinderCard>
           );
         })}
       </Container>

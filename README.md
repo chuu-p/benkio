@@ -111,7 +111,7 @@ sounds: [sound:file.mp3] # unsure if this is possible, if you can extract this f
 
 ## Technical Backlog
 
-- [ ] Add [JSON Schema](https://json-schema.org/) for Message passing between front- and backend
+- [X] Add [JSON Schema](https://json-schema.org/) for Message passing between front- and backend
 
 ## References
 
