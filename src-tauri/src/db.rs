@@ -3,6 +3,10 @@ use std::error::Error;
 use log::warn;
 use serde::{Deserialize, Serialize};
 
+// TODO rewrite this with traits.
+
+// ------------
+
 pub struct FlashcardDB {
     db_path: String,
 }
