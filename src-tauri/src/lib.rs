@@ -65,7 +65,7 @@ struct Deck {
 }
 
 impl Deck {
-    fn load_from_db(conn: &SqliteConnection) -> Self {
+    fn load_from_db(conn: &mut SqliteConnection) -> Self {
         // let results = flashcards
         //     .limit(5)
         //     .select(Flashcard::as_select())
@@ -87,27 +87,22 @@ impl Deck {
         todo!()
     }
 
-    async fn save_to_db(&self, conn: &SqliteConnection) {
+    async fn save_to_db(&self, conn: &mut SqliteConnection) {
         // for card in &self.cards {
-        //     if card.id.is_none() {
-        //         sqlx::query!(
-        //             "INSERT INTO flashcards (content, interval, next_review) VALUES (?, ?, ?)",
-        //             card.content, card.interval, card.next_review
-        //         )
-        //         .execute(pool)
-        //         .await
-        //         .unwrap();
-        //     } else {
-        //         sqlx::query!(
-        //             "UPDATE flashcards SET content = ?, interval = ?, next_review = ? WHERE id = ?",
-        //             card.content, card.interval, card.next_review, card.id
-        //         )
-        //         .execute(pool)
-        //         .await
-        //         .unwrap();
-        //     }
+        //     let new_card = NewCard {
+        //         content_front: content_front,
+        //         content_back: content_back,
+        //         interval: 1,
+        //         next_review: Utc::now().naive_utc() + Duration::days(1),
+        //     };
+
+        //     diesel::insert_into(flashcards::table)
+        //         .values(&new_card)
+        //         .returning(Flashcard::as_returning())
+        //         .get_result(conn)
+        //         .expect("Error saving new flashcard");
         // }
-        todo!()
+        // todo!()
     }
 
     // fn learn_day(&mut self) {
@@ -137,6 +132,8 @@ impl Deck {
 #[cfg(test)]
 mod tests {
     use db::establish_connection;
+    use models::Review;
+    use schemars::schema_for;
 
     use self::schema::flashcards::dsl::*;
     use super::*;
@@ -185,8 +182,33 @@ mod tests {
     }
 }
 
+fn generate_json_schemas() -> Result<(), Box<dyn std::error::Error>> {
+    use models::{Flashcard, Review};
+    use schemars::schema_for;
+    use std::fs;
+    let schemas: Vec<(&str, schemars::schema::RootSchema)> = vec![
+        ("flashcard", schema_for!(Flashcard)),
+        ("review", schema_for!(Review)),
+    ];
+
+    let folder = "../shared/schemas";
+    fs::create_dir_all(folder).unwrap();
+
+    for (name, schema) in schemas {
+        let file_path = format!("{}/{}.schema.json", folder, name);
+        let json = serde_json::to_string_pretty(&schema)?;
+
+        println!("Writing schema {} to {}", name, file_path);
+        fs::write(file_path, json).expect("Unable to write file");
+    }
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    generate_json_schemas().unwrap();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(

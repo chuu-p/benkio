@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Review",
+  "type": "object",
+  "required": [
+    "card_id",
+    "correct",
+    "duration_back",
+    "duration_front",
+    "id",
+    "interval",
+    "review_date"
+  ],
+  "properties": {
+    "card_id": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "correct": {
+      "type": "boolean"
+    },
+    "duration_back": {
+      "type": "number",
+      "format": "float"
+    },
+    "duration_front": {
+      "type": "number",
+      "format": "float"
+    },
+    "id": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "interval": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "partial-date-time"
+    }
+  }
+}

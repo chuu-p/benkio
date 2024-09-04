@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Flashcard",
+  "type": "object",
+  "required": [
+    "content_back",
+    "content_front",
+    "id",
+    "interval",
+    "next_review"
+  ],
+  "properties": {
+    "content_back": {
+      "type": "string"
+    },
+    "content_front": {
+      "type": "string"
+    },
+    "id": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "interval": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "next_review": {
+      "type": "string",
+      "format": "partial-date-time"
+    }
+  }
+}

@@ -2848,6 +2848,7 @@ version = "0.8.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09c024468a378b7e36765cd36702b7a90cc3cba11654f6685c8f233408e89e92"
 dependencies = [
+ "chrono",
  "dyn-clone",
  "indexmap 1.9.3",
  "schemars_derive",
@@ -4102,6 +4103,7 @@ dependencies = [
  "dotenvy",
  "log",
  "rand 0.8.5",
+ "schemars",
  "serde",
  "serde_json",
  "tauri",
