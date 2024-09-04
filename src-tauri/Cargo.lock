@@ -3599,6 +3599,8 @@ dependencies = [
  "smallvec",
  "sqlformat",
  "thiserror",
+ "tokio",
+ "tokio-stream",
  "tracing",
  "url",
 ]
@@ -3638,6 +3640,7 @@ dependencies = [
  "sqlx-sqlite",
  "syn 2.0.72",
  "tempfile",
+ "tokio",
  "url",
 ]
 
@@ -4335,6 +4338,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio-stream"
+version = "0.1.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "267ac89e0bec6e691e5813911606935d77c476ff49024f98abcea3e7b15e37af"
+dependencies = [
+ "futures-core",
+ "pin-project-lite",
+ "tokio",
+]
+
+[[package]]
 name = "tokio-util"
 version = "0.7.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4691,10 +4705,11 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "voxab"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "chrono",
  "log",
+ "rand 0.8.5",
  "serde",
  "serde_json",
  "sqlx",

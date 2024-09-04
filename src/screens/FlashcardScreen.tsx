@@ -12,7 +12,8 @@ type Flashcard = {
 };
 
 async function getFlashcards(): Promise<Flashcard[]> {
-  let response: string = await invoke("get_flashcards", { amount: 10 });
+  // let response: string = await invoke("get_flashcards", { amount: 10 });
+  let response: string = await invoke("get_flashcards_for_today");
   info(`response ${response}`);
   let parsed: Flashcard[] = JSON.parse(response);
   return parsed;
@@ -89,6 +90,7 @@ function FlashcardScreen() {
         maxWidth="md"
         sx={{ "user-select": "none", cursor: "default" }}
       >
+        <div>0 ? | 1 false | 60 due</div>
         {flashcards.map((flashcard) => {
           return (
             <TinderCard

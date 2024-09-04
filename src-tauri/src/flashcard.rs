@@ -1,139 +1,162 @@
-// use std::sync::atomic::{AtomicUsize, Ordering};
-
-// use fsrs::{Card, FSRSItem};
-// use serde::{Deserialize, Serialize};
-
-// // fsrs: FSRS::new(Some(&fsrs::DEFAULT_PARAMETERS)).unwrap(),
-// static COUNTER: AtomicUsize = AtomicUsize::new(1);
-// fn get_id() -> usize {
-//     COUNTER.fetch_add(1, Ordering::Relaxed)
-// }
-
-// #[derive(Serialize, Deserialize)]
-// #[serde(remote = "Card")]
-// pub struct CardDef {
-//     pub difficulty: f32,
-//     pub stability: f32,
-//     pub last_date: f32,
-//     pub due: f32,
-// }
-
-// #[derive(Serialize, Deserialize)]
-// pub struct Flashcard {
-//     pub id: usize,
-//     pub side_a: String,
-//     pub side_b: String,
-
-//     #[serde(with = "CardDef")]
-//     pub card: Card,
-//     pub fsrs_item: FSRSItem,
-// }
-
-// impl Default for Flashcard {
-//     fn default() -> Self {
-//         Self {
-//             id: get_id(),
-//             side_a: String::new(),
-//             side_b: String::new(),
-
-//             card: Card {
-//                 difficulty: 0f32,
-//                 stability: 0f32,
-//                 last_date: 0f32,
-//                 due: 0f32,
-//             },
-//             fsrs_item: FSRSItem {
-//                 reviews: Vec::new(),
-//             },
-//         }
-//     }
-// }
-
-// Import necessary libraries
-use chrono::{Duration, Utc};
+use chrono::{Duration, NaiveDateTime, Utc};
 use serde::{Deserialize, Serialize};
+use sqlx::{sqlite::SqlitePool, FromRow};
+use std::collections::VecDeque;
 
-// Define a struct to represent a flashcard
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, FromRow)]
 struct Flashcard {
-    // id: u64,
+    id: Option<i64>,
     content: String,
-    // content_front: String,
-    // content_back: String,
     ease_factor: f64,
     interval: i64,
-    next_review: chrono::DateTime<Utc>,
+    next_review: NaiveDateTime,
 }
 
-// Define constants for initial settings
 const INITIAL_EASE_FACTOR: f64 = 2.5;
 const INITIAL_INTERVAL: i64 = 1;
-const FORGETTING_INDEX: f64 = 0.2; // Target forgetting probability
 
 impl Flashcard {
-    // Create a new flashcard with initial values
     fn new(content: String) -> Self {
         Flashcard {
+            id: None,
             content,
             ease_factor: INITIAL_EASE_FACTOR,
             interval: INITIAL_INTERVAL,
-            next_review: Utc::now() + Duration::days(INITIAL_INTERVAL),
+            next_review: Utc::now().naive_utc() + Duration::days(INITIAL_INTERVAL),
         }
     }
 
-    // Update the flashcard based on recall performance
-    fn update(&mut self, recall_quality: i32) {
-        // Adjust the ease factor based on recall quality
-        let new_ease_factor = match recall_quality {
-            5 => self.ease_factor + 0.1,
-            4 => self.ease_factor,
-            3 => self.ease_factor - 0.15,
-            2 => self.ease_factor - 0.3,
-            1 => self.ease_factor - 0.5,
-            _ => self.ease_factor - 1.0,
-        };
-
-        // Ensure the ease factor does not drop below a minimum threshold
-        self.ease_factor = new_ease_factor.max(1.3);
-
-        // Calculate the new interval based on the ease factor and previous interval
-        if recall_quality >= 3 {
+    fn update(&mut self, passed: bool) {
+        if passed {
+            self.ease_factor += 0.1;
             self.interval = (self.interval as f64 * self.ease_factor).ceil() as i64;
         } else {
+            self.ease_factor -= 0.3;
+            if self.ease_factor < 1.3 {
+                self.ease_factor = 1.3;
+            }
             self.interval = 1;
         }
+        self.next_review = Utc::now().naive_utc() + Duration::days(self.interval);
+    }
+}
 
-        // Update the next review date
-        self.next_review = Utc::now() + Duration::days(self.interval);
+#[derive(Debug)]
+struct Deck {
+    cards: VecDeque<Flashcard>,
+    learning_queue: VecDeque<Flashcard>,
+    max_new_cards_per_day: usize,
+}
+
+impl Deck {
+    fn new(max_new_cards_per_day: usize) -> Self {
+        Deck {
+            cards: VecDeque::new(),
+            learning_queue: VecDeque::new(),
+            max_new_cards_per_day,
+        }
+    }
+
+    async fn load_from_db(pool: &SqlitePool) -> Self {
+        let cards: Vec<Flashcard> = sqlx::query_as!(
+            Flashcard,
+            "SELECT id, content, ease_factor, interval, next_review as next_review FROM flashcards"
+        )
+        .fetch_all(pool)
+        .await
+        .unwrap();
+
+        let mut deck = Deck::new(20);
+        for card in cards {
+            deck.cards.push_back(card);
+        }
+        deck
+    }
+
+    async fn save_to_db(&self, pool: &SqlitePool) {
+        for card in &self.cards {
+            if card.id.is_none() {
+                sqlx::query!(
+                    "INSERT INTO flashcards (content, ease_factor, interval, next_review) VALUES (?, ?, ?, ?)",
+                    card.content, card.ease_factor, card.interval, card.next_review
+                )
+                .execute(pool)
+                .await
+                .unwrap();
+            } else {
+                sqlx::query!(
+                    "UPDATE flashcards SET content = ?, ease_factor = ?, interval = ?, next_review = ? WHERE id = ?",
+                    card.content, card.ease_factor, card.interval, card.next_review, card.id
+                )
+                .execute(pool)
+                .await
+                .unwrap();
+            }
+        }
+    }
+
+    fn add_card(&mut self, content: String) {
+        self.learning_queue.push_back(Flashcard::new(content));
+    }
+
+    fn learn_day(&mut self) {
+        let mut new_cards_today = 0;
+
+        for card in &mut self.cards {
+            if card.next_review <= Utc::now().naive_utc() {
+                let passed = rand::random::<bool>();
+                card.update(passed);
+                println!(
+                    "Reviewed: {:?}, Passed: {}, Next Review: {:?}",
+                    card.content, passed, card.next_review
+                );
+            }
+        }
+
+        while new_cards_today < self.max_new_cards_per_day && !self.learning_queue.is_empty() {
+            let mut card = self.learning_queue.pop_front().unwrap();
+            let passed = true;
+            card.update(passed);
+            self.cards.push_back(card);
+            new_cards_today += 1;
+        }
     }
 }
 
 #[cfg(test)]
 pub mod tests {
 
+    use log::info;
+
     use super::*;
     // use crate::flashcard::Flashcard;
 
-    #[test]
-    fn smoke_test_flashcard_update() -> Result<(), String> {
-        // Create a new flashcard
-        let mut flashcard = Flashcard::new("What is the capital of France?".to_string());
+    // #[tokio::test]
+    async fn create_db() {
+        let pool = SqlitePool::connect("sqlite://flashcards.db").await.unwrap();
+        sqlx::query(include_str!("schema.sql"))
+            .execute(&pool)
+            .await
+            .unwrap();
+    }
 
-        // Simulate a review with different recall qualities
-        println!("Initial Flashcard: {:?}", flashcard);
+    #[tokio::test]
+    async fn main() {
+        let pool = SqlitePool::connect("sqlite://flashcards.db").await.unwrap();
 
-        // User recalls correctly with ease
-        flashcard.update(5);
-        println!("After Easy Recall: {:?}", flashcard);
+        let mut deck = Deck::load_from_db(&pool).await;
 
-        // User recalls with some difficulty
-        flashcard.update(3); // Good
-        println!("After Difficult Recall: {:?}", flashcard);
+        for i in 1..=100 {
+            deck.add_card(format!("Card {}", i));
+        }
 
-        // User fails to recall
-        flashcard.update(1); // FAIL
-        println!("After Failed Recall: {:?}", flashcard);
+        for day in 1..=10 {
+            println!("Day {}: Learning session", day);
+            deck.learn_day();
+        }
 
-        Ok(())
+        deck.save_to_db(&pool).await;
+
+        println!("Final state of the deck: {:?}", deck);
     }
 }

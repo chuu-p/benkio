@@ -4,20 +4,22 @@ Mobile app for language learning.
 
 ## Features
 
-- [ ] flashcard view
-    - [ ] Display Side A, "Show Answer" button, Show answer everywhere on screen
-    - [ ] "Show Answer" -> Display Side A, Side B, Pass/Fail buttons -> zap OR swipe left/right like tinder to pass/fail
-    - [ ] only be able to swipe left/right when answer is shown!
+- [x] flashcard view
+  - [x] Display Side A, "Show Answer" button, Show answer everywhere on screen
+  - [x] "Show Answer" -> Display Side A, Side B, Pass/Fail buttons -> zap OR swipe left/right like tinder to pass/fail
+  - [x] only be able to swipe left/right when answer is shown!
+- [ ] flashcard backend
+  - [ ] get due cards for today
 
 1. Kana lernen ->
-    - ~one week of doing only kana-cards
-    - Suspend cards, that are passed very quickly multiple times (just kana)
-    - then they leave the deck
+   - ~one week of doing only kana-cards
+   - Suspend cards, that are passed very quickly multiple times (just kana)
+   - then they leave the deck
 2. Learn first 1000 words (kanji) +
-    - 1000 words learning through flashcards
-    - basic grammar learing through single articles (not flashcards) https://guidetojapanese.org/learn/category/grammar-guide/basic-grammar/
+   - 1000 words learning through flashcards
+   - basic grammar learing through single articles (not flashcards) https://guidetojapanese.org/learn/category/grammar-guide/basic-grammar/
 3. creating own flashcards
-    - screenshot -> ocr -> text -> flashcard
+   - screenshot -> ocr -> text -> flashcard
 
 ## Technical Backlog
 
@@ -26,7 +28,6 @@ Mobile app for language learning.
 ## References
 
 Kana are taken from https://github.com/shlchoi/kana
-
 
 ## Recommended IDE Setup
 
