@@ -1,7 +1,7 @@
 {
   "productName": "voxab",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "se.genos.voxab", 
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",

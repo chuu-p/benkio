@@ -1,3 +1,3 @@
-package com.tauri.dev
+package se.genos.voxab
 
 class MainActivity : TauriActivity()
