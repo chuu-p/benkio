@@ -115,9 +115,16 @@ sounds: [sound:file.mp3] # unsure if this is possible, if you can extract this f
 
 - [X] Add [JSON Schema](https://json-schema.org/) for Message passing between front- and backend
 
-## References
+## dev
 
-Kana are taken from https://github.com/shlchoi/kana
+initialize
+> `yarn install`  
+> `cd src-tauri`  
+> `diesel database reset`  
+> `cd ..`
+
+dev
+> `yarn tauri dev`
 
 ## Recommended IDE Setup
 
