@@ -1,6 +1,8 @@
 # benkio
 
-Mobile app for language learning.
+benki/o is a Japanese language learning app for iOS and Android.
+
+Learn Japanese from zero to <ruby>絶対<rt>zettai</rt></ruby>!
 
 ## Sequence
 
