@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import FlashcardScreen from "./screens/FlashcardScreen";
@@ -34,6 +34,14 @@ export const getDesignTokens = (mode: PaletteMode) => ({
 function App() {
   const [mode, _setMode] = useState<PaletteMode>("dark");
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+
+  // https://stackoverflow.com/a/74637170/26371953
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "scroll";
+    };
+  }, []);
 
   return (
     <>

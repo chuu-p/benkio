@@ -1,17 +1,9 @@
-import {
-  createRef,
-  RefObject,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import Flashcard from "../components/Flashcard";
 import TinderCard from "react-tinder-card";
 import { Container } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
-import { info } from "@tauri-apps/plugin-log";
-import { unmountComponentAtNode } from "react-dom";
+import { debug, info } from "@tauri-apps/plugin-log";
 
 type Flashcard = {
   id: number;
@@ -19,30 +11,18 @@ type Flashcard = {
   sideB: string;
 };
 
-async function getFlashcards(): Promise<Flashcard> {
-  let res: string = await invoke("get_flashcards", { amount: 1 });
+async function getFlashcards(): Promise<Flashcard[]> {
+  let res: string = await invoke("get_flashcards", { amount: 10 });
   info(`res ${res}`);
   let parsed: Flashcard[] = JSON.parse(res);
-  return parsed[0];
+  return parsed;
 }
 
 function FlashcardScreen() {
-  // TODO Implement this for one single flashcard for debugging
-  const [flashcards, setFlashcards] = useState<Flashcard>();
-  // const itemsRef: React.MutableRefObject<Map<number, any>> = useRef<
-  //   Map<number, any>
-  // >(new Map());
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const itemsRef = useRef<Map<number, any>>(null);
 
-  const fcRef = useRef(null);
-
-  function getMap(): Map<number, any> {
-    if (!itemsRef.current) {
-      // Initialize the Map on first usage.
-      itemsRef.current = new Map<number, any>();
-    }
-    return itemsRef.current;
-  }
-
+  // Init Cards
   useEffect(() => {
     async function fetchFlashcards() {
       try {
@@ -56,64 +36,42 @@ function FlashcardScreen() {
     fetchFlashcards();
   }, []);
 
-  const swipe = async (dir: "left" | "right") => {
-    info("should swipe");
-    info(`direction: ${dir}`);
-    // await childRefs[flashcardRef.current].current.swipe(dir);
+  // https://react.dev/learn/manipulating-the-dom-with-refs
+  function getMap(): Map<number, any> {
+    if (!itemsRef.current) {
+      // Initialize the Map on first usage.
+      itemsRef.current = new Map<number, any>();
+    }
+    return itemsRef.current;
+  }
+
+  const removeFlashcardById = (id: number) => {
+    setFlashcards((prevFlashcards) =>
+      prevFlashcards.filter((flashcard) => flashcard.id !== id),
+    );
   };
 
-  const handlePass = async (index: number) => {
-    // setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-    // flashcardRef.current = index + 1;
-    // let div = itemsRef.current.get(index);
-    // let card = div?.getElementsByTagName("TinderCard")[0];
-    // let card = itemsRef.current[index]?.querySelector("TinderCard");
-
-    info(`index: ${index}`);
-    info("Passed");
-    fcRef.current.swipe("right");
-    // await swipe("right");
-  };
-
-  const onCardLeftScreen = (myIdentifier) => {
-    console.log(myIdentifier + " left the screen");
-  };
-
-  const handleFail = async (index: number) => {
-    swipe("left");
-    // setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-    // flashcardRef.current = index + 1;
-    info("Failed");
-    await swipe("left");
+  const handlePress = async (
+    flashcardId: number,
+    operation: "pass" | "fail",
+  ) => {
+    debug(`flashcardId: ${flashcardId}, operation: ${operation}`);
+    const map = getMap();
+    const node = map.get(flashcardId);
+    const direction = operation == "pass" ? "right" : "left";
+    await node?.swipe(direction);
+    map.delete(flashcardId);
+    removeFlashcardById(flashcardId);
   };
 
   return (
     <>
-      <Container maxWidth="md">
-        <TinderCard
-          swipeRequirementType="position"
-          swipeThreshold={100}
-          preventSwipe={["up", "down"]}
-          onCardLeftScreen={() => onCardLeftScreen("fooBar")}
-          key={flashcards?.id ?? 0}
-          ref={fcRef}
-        >
-          <Flashcard
-            sideA={flashcards?.sideA ?? "0"}
-            sideB={flashcards?.sideB ?? "0"}
-            onPass={async () => await handlePass(flashcards?.id ?? 0)}
-            onFail={async () => await handleFail(flashcards?.id ?? 0)}
-          />
-        </TinderCard>
-
-        {/* {flashcards.map((flashcard) => {
+      <Container maxWidth="md" className="no-scroll">
+        {flashcards.map((flashcard) => {
           return (
             <TinderCard
               swipeRequirementType="position"
               swipeThreshold={100}
-              onSwipe={(direction: "right" | "left" | "up" | "down") => {
-                onSwipe(direction, flashcard.id);
-              }}
               preventSwipe={["up", "down"]}
               key={flashcard.id}
               ref={(node) => {
@@ -128,12 +86,12 @@ function FlashcardScreen() {
               <Flashcard
                 sideA={flashcard.sideA}
                 sideB={flashcard.sideB}
-                onPass={async () => await handlePass(flashcard.id)}
-                onFail={async () => await handleFail(flashcard.id)}
+                onPass={async () => await handlePress(flashcard.id, "pass")}
+                onFail={async () => await handlePress(flashcard.id, "fail")}
               />
             </TinderCard>
           );
-        })} */}
+        })}
       </Container>
     </>
   );
