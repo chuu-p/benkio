@@ -1,7 +1,7 @@
 {
   "productName": "voxab",
-  "version": "0.0.0",
-  "identifier": "se.genos.voxab", 
+  "version": "0.0.1",
+  "identifier": "se.genos.voxab",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -12,8 +12,10 @@
     "windows": [
       {
         "title": "voxab",
-        "width": 800,
-        "height": 600
+        "width": 415,
+        "height": 890,
+        "x": 0,
+        "y": 0
       }
     ],
     "security": {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, Typography, Button, Stack } from '@mui/material';
 
 interface FlashcardProps {
@@ -26,7 +26,10 @@ function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
     };
 
     return (
-        <Card sx={{ maxWidth: 345, margin: '20px auto', padding: 2 }}>
+        <Card
+            sx={{ position: "absolute", maxWidth: "90vw", minHeight: "90vh", margin: '20px auto', padding: 2 }}
+            onClick={handleShowAnswer}
+        >
             <CardContent>
                 <Typography variant="h5" component="div">
                     {sideA}
@@ -39,9 +42,7 @@ function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
             </CardContent>
             <Stack direction="row" spacing={2} justifyContent="center" sx={{ padding: 2 }}>
                 {!showAnswer ? (
-                    <Button variant="contained" onClick={handleShowAnswer}>
-                        Show Answer
-                    </Button>
+                    <></>
                 ) : (
                     <>
                         <Button variant="contained" color="error" onClick={handleFail}>
