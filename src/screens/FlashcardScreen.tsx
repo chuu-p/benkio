@@ -62,12 +62,11 @@ function FlashcardScreen() {
     flashcardId: number,
     operation: "pass" | "fail",
   ) => {
-    debug(`flashcardId: ${flashcardId}, operation: ${operation}`);
-    const map = getMap();
-    const node = map.get(flashcardId);
-    const direction = operation == "pass" ? "right" : "left";
-    await node?.swipe(direction);
-    map.delete(flashcardId);
+    let response: string = await invoke("update_flashcard", { id: flashcardId, passed: true });
+    info(response);
+    // invoke("get_flashcards_for_today", { id: flashcardId, passed: true })
+    //   .then((message: string) => info(message))
+    //   .catch((error) => error(error));
     removeFlashcardById(flashcardId);
   };
 

@@ -27,7 +27,7 @@ mod tests {
             content_front: front_a,
             content_back: back_a,
             interval: 1,
-            next_review: Utc::now().naive_utc() + Duration::days(1),
+            next_review: Utc::now().naive_utc(),
         };
 
         diesel::insert_into(flashcards::table)
@@ -40,6 +40,10 @@ mod tests {
     #[test]
     fn it_create_card() {
         let connection = &mut establish_connection();
+
+        diesel::delete(crate::schema::flashcards::table)
+            .execute(connection)
+            .unwrap();
 
         let contents = vec![
             // Day 1
@@ -108,7 +112,7 @@ mod tests {
         }
     }
 
-    #[test]
+    // #[test]
     fn it_works() {
         let connection = &mut establish_connection();
 

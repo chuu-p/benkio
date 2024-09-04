@@ -3,14 +3,13 @@ mod flashcard;
 pub mod models;
 pub mod schema;
 
+use crate::flashcard::MAX_NEW_CARDS_PER_DAY;
 use chrono::{Duration, Utc};
 use db::establish_connection;
 use diesel::prelude::*;
-use diesel::SqliteConnection;
 use log::{info, LevelFilter};
 use models::{Flashcard, NewCard};
-use schema::flashcards;
-use std::collections::VecDeque;
+use schema::flashcards::{self, interval};
 use tauri_plugin_log::{Target, TargetKind};
 
 #[tauri::command]
@@ -20,8 +19,10 @@ fn get_flashcards_for_today() -> String {
     let connection = &mut establish_connection();
 
     let results = flashcards::dsl::flashcards
-        .limit(5)
         .select(Flashcard::as_select())
+        .filter(flashcards::next_review.lt(Utc::now().naive_utc()))
+        .limit(MAX_NEW_CARDS_PER_DAY)
+        .order(flashcards::id)
         .load(connection)
         .expect("Error loading cards");
 
@@ -35,6 +36,38 @@ fn get_flashcards_for_today() -> String {
     let json = serde_json::to_string_pretty(&results).unwrap();
 
     json
+}
+
+#[tauri::command]
+fn update_flashcard(id: i32, passed: bool) -> Result<String, String> {
+    let connection = &mut establish_connection();
+
+    let mut card = flashcards::dsl::flashcards
+        .filter(flashcards::id.eq(id))
+        .get_result::<Flashcard>(connection)
+        .expect("Error loading card");
+
+    card.update(passed);
+
+    diesel::update(flashcards::dsl::flashcards.find(id))
+        .set((
+            flashcards::interval.eq(card.interval),
+            flashcards::next_review.eq(card.next_review),
+        ))
+        .execute(connection)
+        .expect("Error updating card");
+
+    // diesel::update(flashcards::dsl::flashcards.find(id))
+    //     .set(interval.eq(card.interval))
+    //     .execute(connection)
+    //     .expect("Error updating card");
+
+    // diesel::update(flashcards::dsl::flashcards.find(id))
+    //     .set(flashcards::next_review.eq(card.next_review))
+    //     .execute(connection)
+    //     .expect("Error updating card");
+
+    Ok("Success".to_string())
 }
 
 #[tauri::command]
@@ -99,7 +132,7 @@ pub fn run() {
         )
         .invoke_handler(tauri::generate_handler![
             get_flashcards_for_today,
-            debug_create_card,
+            update_flashcard,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
