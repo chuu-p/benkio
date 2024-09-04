@@ -1,21 +1,33 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import FlashcardScreen from "./screens/FlashcardScreen";
 import { ButtonAppBar } from "./components/AppBar";
 import {
+  Container,
   createTheme,
   CssBaseline,
   PaletteMode,
   ThemeProvider,
 } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
+import HomeScreen from "./screens/HomeScreen";
+import ErrorScreen from "./screens/ErrorScreen";
+import KanaScreen from "./screens/KanaScreen";
 
 const router = createBrowserRouter([
+  // <Routes>
+  //       {/* Dynamic route for levels */}
+  //       <Route path="/level/:levelNumber" element={<Level />} />
+  //       {/* Default route */}
+  //       <Route path="/" element={<Level />} />
+  //     </Routes>
   {
     path: "/",
-    element: <FlashcardScreen />,
+    element: <HomeScreen />,
   },
+  { path: "/level/:levelNumber", element: <KanaScreen /> },
+
+
 ]);
 
 export const getDesignTokens = (mode: PaletteMode) => ({
@@ -23,11 +35,11 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     mode,
     ...(mode === "light"
       ? {
-          primary: deepOrange,
-        }
+        primary: deepOrange,
+      }
       : {
-          primary: deepOrange,
-        }),
+        primary: deepOrange,
+      }),
   },
 });
 
@@ -48,7 +60,11 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <ButtonAppBar />
-        <RouterProvider router={router} />
+        <Container
+          maxWidth="md"
+          sx={{ "user-select": "none", cursor: "default" }}>
+          <RouterProvider router={router} />
+        </Container>
       </ThemeProvider>
     </>
   );

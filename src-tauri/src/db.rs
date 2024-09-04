@@ -17,7 +17,7 @@ mod tests {
         db::establish_connection,
         models::{Flashcard, NewCard},
     };
-    use chrono::{Duration, Utc};
+    use chrono::Utc;
     use diesel::prelude::*;
 
     pub fn create_card(conn: &mut SqliteConnection, front_a: &str, back_a: &str) -> Flashcard {

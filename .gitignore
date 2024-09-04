@@ -1,3 +1,5 @@
+docs/reference/*
+
 # Logs
 logs
 *.log

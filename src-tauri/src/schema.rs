@@ -11,6 +11,14 @@ diesel::table! {
 }
 
 diesel::table! {
+    levels (id) {
+        id -> Integer,
+        current_level -> Integer,
+        level_date -> Timestamp,
+    }
+}
+
+diesel::table! {
     reviews (id) {
         id -> Integer,
         card_id -> Integer,
@@ -26,5 +34,6 @@ diesel::joinable!(reviews -> flashcards (card_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     flashcards,
+    levels,
     reviews,
 );

@@ -1,4 +1,4 @@
-use chrono::{Duration, Utc};
+use chrono::{Duration, TimeDelta, Utc};
 
 use crate::models::Flashcard;
 
@@ -9,6 +9,15 @@ pub const MAX_NEW_CARDS_PER_DAY: i64 = 5;
 
 // TODO: interval should be 1 min, 10 min, 1 day, 3 days, etc.
 // TODO: Add entry to reviews table
+
+const INTERVALS: [TimeDelta; 5] = [
+    Duration::minutes(1),
+    Duration::minutes(10),
+    Duration::days(1),
+    Duration::days(3),
+    Duration::days(7),
+];
+
 impl Flashcard {
     pub fn update(&mut self, passed: bool) {
         self.interval = {

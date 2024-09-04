@@ -9,7 +9,10 @@ use db::establish_connection;
 use diesel::prelude::*;
 use log::{info, LevelFilter};
 use models::{Flashcard, NewCard};
-use schema::flashcards::{self, interval};
+use schema::{
+    flashcards::{self, interval},
+    levels,
+};
 use tauri_plugin_log::{Target, TargetKind};
 
 #[tauri::command]
@@ -92,6 +95,19 @@ fn debug_create_card() -> String {
     json
 }
 
+#[tauri::command]
+fn get_level() -> i32 {
+    let connection = &mut establish_connection();
+
+    let level = levels::dsl::levels
+        .select(levels::current_level)
+        .order(levels::level_date.desc())
+        .first::<i32>(connection)
+        .expect("Error loading level");
+
+    level
+}
+
 fn generate_json_schemas() -> Result<(), Box<dyn std::error::Error>> {
     use models::{Flashcard, Review};
     use schemars::schema_for;
@@ -133,6 +149,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_flashcards_for_today,
             update_flashcard,
+            get_level
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
