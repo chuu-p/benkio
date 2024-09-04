@@ -4,9 +4,11 @@ import { Card, CardContent, Typography, Button, Stack } from '@mui/material';
 interface FlashcardProps {
     sideA: string;
     sideB: string;
+    onPass: () => void;
+    onFail: () => void;
 }
 
-function Flashcard({ sideA, sideB }: FlashcardProps) {
+function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
     const [showAnswer, setShowAnswer] = useState(false);
 
     const handleShowAnswer = () => {
@@ -14,13 +16,13 @@ function Flashcard({ sideA, sideB }: FlashcardProps) {
     };
 
     const handlePass = () => {
-        alert('Pass');
         setShowAnswer(false);
+        onPass();
     };
 
     const handleFail = () => {
-        alert('Fail');
         setShowAnswer(false);
+        onFail();
     };
 
     return (
@@ -42,11 +44,11 @@ function Flashcard({ sideA, sideB }: FlashcardProps) {
                     </Button>
                 ) : (
                     <>
-                        <Button variant="contained" color="success" onClick={handlePass}>
-                            Pass
-                        </Button>
                         <Button variant="contained" color="error" onClick={handleFail}>
                             Fail
+                        </Button>
+                        <Button variant="contained" color="success" onClick={handlePass}>
+                            Pass
                         </Button>
                     </>
                 )}
