@@ -1,7 +1,11 @@
+use std::sync::atomic::{AtomicUsize, Ordering};
+
 use fsrs::{Card, FSRSItem};
 use serde::{Deserialize, Serialize};
 
 // fsrs: FSRS::new(Some(&fsrs::DEFAULT_PARAMETERS)).unwrap(),
+static COUNTER: AtomicUsize = AtomicUsize::new(1);
+fn get_id() -> usize { COUNTER.fetch_add(1, Ordering::Relaxed) }
 
 #[derive(Serialize, Deserialize)]
 #[serde(remote = "Card")]
@@ -14,6 +18,7 @@ pub struct CardDef {
 
 #[derive(Serialize, Deserialize)]
 pub struct Flashcard {
+    pub id: usize,
     pub side_a: String,
     pub side_b: String,
 
@@ -25,6 +30,7 @@ pub struct Flashcard {
 impl Default for Flashcard {
     fn default() -> Self {
         Self {
+            id: get_id(),
             side_a: String::new(),
             side_b: String::new(),
 

@@ -40,11 +40,9 @@ function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container maxWidth="md">
-          <CssBaseline />
-          <ButtonAppBar />
-          <RouterProvider router={router} />
-        </Container>
+        <CssBaseline />
+        <ButtonAppBar />
+        <RouterProvider router={router} />
       </ThemeProvider>
     </>
 

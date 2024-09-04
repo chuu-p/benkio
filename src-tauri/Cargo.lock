@@ -5819,6 +5819,7 @@ dependencies = [
  "burn",
  "burn-tensor",
  "fsrs",
+ "lazy_static",
  "log",
  "serde",
  "serde_json",

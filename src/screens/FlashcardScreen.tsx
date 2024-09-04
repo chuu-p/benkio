@@ -1,17 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Flashcard from "../components/Flashcard";
 import TinderCard from "react-tinder-card";
 import { Container } from "@mui/material";
+import { invoke } from "@tauri-apps/api/core";
 
-const flashcards = [
-    { sideA: "Hello", sideB: "Hola" },
-    { sideA: "Goodbye", sideB: "Adiós" },
-    { sideA: "Thank you", sideB: "Gracias" },
-    // Add more flashcards as needed
-];
+
+type Flashcard = {
+    id: number;
+    sideA: string;
+    sideB: string;
+};
+
+async function getFlashcards(): Promise<Flashcard[]> {
+    let res: string = await invoke("get_flashcards", { amount: 10 });
+    console.log("res", res);
+    let parsed: Flashcard[] = JSON.parse(res);
+    return parsed;
+}
 
 function FlashcardScreen() {
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+
+    useEffect(() => {
+        async function fetchFlashcards() {
+            try {
+                console.log("Fetching flashcards...");
+                const cards = await getFlashcards();
+                setFlashcards(cards);
+            } catch (error) {
+                console.error("Failed to fetch flashcards:", error);
+            }
+        }
+        fetchFlashcards();
+    }, []);
 
     const handlePass = () => {
         // setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
@@ -38,6 +59,8 @@ function FlashcardScreen() {
                 {flashcards.map((flashcard, index) => {
                     return <TinderCard
                         key={index}
+                        swipeRequirementType="position"
+                        swipeThreshold={100}
                         onSwipe={onSwipe}
                         preventSwipe={['up', 'down']}>
                         <Flashcard

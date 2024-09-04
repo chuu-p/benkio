@@ -65,9 +65,9 @@ pub mod tests {
     use super::*;
     use crate::flashcard::Flashcard;
 
-    const DB_PATH: &str = "/tmp/test_sled.db";
+    const DB_PATH: &str = "/tmp/sled.db";
 
-    #[test]
+    // #[test]
     fn clear_db() {
         let _ = fs::remove_dir_all(DB_PATH).unwrap();
     }
@@ -80,7 +80,7 @@ pub mod tests {
             db_path: DB_PATH.to_string(),
         };
         let expected = Flashcard::default();
-        let key = &db.id().to_string();
+        let key = &expected.id.to_string();
 
         // act
         let expected_str = serde_json::to_string(&expected).map_err(|e| e.to_string())?;
@@ -117,8 +117,13 @@ pub mod tests {
 
         // act
         for kana in kanas.iter() {
-            let key = &db.id().to_string();
-            db.insert(&key, kana).map_err(|e| e.to_string())?;
+            let flashcard = Flashcard {
+                side_a: kana.character.clone(),
+                side_b: kana.romanization.clone(),
+                ..Default::default()
+            };
+
+            db.insert(&flashcard.id.to_string(), flashcard).map_err(|e| e.to_string())?;
         }
 
         // assert
