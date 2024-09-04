@@ -6,8 +6,8 @@ Mobile app for language learning.
 
 - [ ] flashcard view
     - [ ] Display Side A, "Show Answer" button, Show answer everywhere on screen
-    - [ ] "Show Answer" -> Display Side A, Side B, Pass/Fail buttons -> swipe left/right like tinder to pass/fail
-
+    - [ ] "Show Answer" -> Display Side A, Side B, Pass/Fail buttons -> zap OR swipe left/right like tinder to pass/fail
+    - [ ] only be able to swipe left/right when answer is shown!
 
 1. Kana lernen -> 
     - ~one week of doing only kana-cards

@@ -26,12 +26,13 @@ function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
     };
 
     return (
+        // FIXME position absolute is not working
         <Card
             sx={{ position: "absolute", maxWidth: "90vw", minHeight: "90vh", margin: '20px auto', padding: 2 }}
             onClick={handleShowAnswer}
         >
             <CardContent>
-                <Typography variant="h5" component="div">
+                <Typography variant="h5">
                     {sideA}
                 </Typography>
                 {showAnswer && (
