@@ -1,0 +1,25 @@
+Programming
+- [ ] app Idee : duolingo, was aber wirklich funktioniert fürs Handy (erstmal nur japanisch)
+	- [ ] 3 modi/level (gamify)
+		- [ ] 1. Hiragana und katakana
+		- [ ] 2. Ersten 1000 Wörter
+		- [ ] 3. Immersion und selber Karten machen (das für immer)
+	- [ ] immersion:
+		- [ ] man schaut auf crunchy roll oder Youtube eine Serie und hat ein halb transparenten Button (so wie eingabehilfen für Android)
+		- [ ] wenn man eine Karte erstellen will drückt man diesen Button und ein Screenshot wird gemacht oder so
+		- [ ] die Karte wird erstellt, vllt muss man sie noch korrigieren
+			- [ ] Screenshot -> Crop Screenshot, OCR Text, Split Words, User chooses word to mine, lookup definition, create card with (image, sentence, definition, etc.)
+	- [ ] und man muss natürlich jeden Tag 10-30 min Karten lernen
+	- [ ] tech stack:
+		- [ ] typescript react frontend
+		- [ ] tauri rust backend
+		- [ ] android app
+		- [ ] https://devtut.github.io/android/creating-overlay-always-on-top-windows.html#popup-overlay
+	- [ ] screens:
+		- [ ] login
+		- [ ] home screen
+		- [ ] flashcard learning
+		- [ ] add a new card
+		- [ ] statistics (viewing your progress)
+		- [ ] profile information
+		- [ ] settings

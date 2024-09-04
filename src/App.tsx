@@ -3,7 +3,12 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import FlashcardScreen from "./screens/FlashcardScreen";
 import { ButtonAppBar } from "./components/AppBar";
-import { createTheme, CssBaseline, PaletteMode, ThemeProvider } from "@mui/material";
+import {
+  createTheme,
+  CssBaseline,
+  PaletteMode,
+  ThemeProvider,
+} from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 
 const router = createBrowserRouter([
@@ -18,11 +23,11 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     mode,
     ...(mode === "light"
       ? {
-        primary: deepOrange,
-      }
+          primary: deepOrange,
+        }
       : {
-        primary: deepOrange,
-      }),
+          primary: deepOrange,
+        }),
   },
 });
 
