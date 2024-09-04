@@ -17,6 +17,7 @@ Mobile app for language learning.
     - 1000 words learning through flashcards
     - basic grammar learing through single articles (not flashcards) https://guidetojapanese.org/learn/category/grammar-guide/basic-grammar/
 3. creating own flashcards
+    - screenshot -> ocr -> text -> flashcard
 
 
 ## References

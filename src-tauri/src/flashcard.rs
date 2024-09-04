@@ -5,7 +5,9 @@ use serde::{Deserialize, Serialize};
 
 // fsrs: FSRS::new(Some(&fsrs::DEFAULT_PARAMETERS)).unwrap(),
 static COUNTER: AtomicUsize = AtomicUsize::new(1);
-fn get_id() -> usize { COUNTER.fetch_add(1, Ordering::Relaxed) }
+fn get_id() -> usize {
+    COUNTER.fetch_add(1, Ordering::Relaxed)
+}
 
 #[derive(Serialize, Deserialize)]
 #[serde(remote = "Card")]

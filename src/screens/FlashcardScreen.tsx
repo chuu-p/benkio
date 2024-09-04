@@ -3,6 +3,7 @@ import Flashcard from "../components/Flashcard";
 import TinderCard from "react-tinder-card";
 import { Container } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
+import { info } from "@tauri-apps/plugin-log";
 
 
 type Flashcard = {
@@ -13,7 +14,7 @@ type Flashcard = {
 
 async function getFlashcards(): Promise<Flashcard[]> {
     let res: string = await invoke("get_flashcards", { amount: 10 });
-    console.log("res", res);
+    info(`res ${res}`);
     let parsed: Flashcard[] = JSON.parse(res);
     return parsed;
 }
@@ -24,7 +25,7 @@ function FlashcardScreen() {
     useEffect(() => {
         async function fetchFlashcards() {
             try {
-                console.log("Fetching flashcards...");
+                info("Fetching flashcards...");
                 const cards = await getFlashcards();
                 setFlashcards(cards);
             } catch (error) {
@@ -36,16 +37,16 @@ function FlashcardScreen() {
 
     const handlePass = () => {
         // setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-        console.log("Passed");
+        info("Passed");
     };
 
     const handleFail = () => {
         // setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-        console.log("Failed");
+        info("Failed");
     };
 
     const onSwipe = (direction: "right" | "left" | "up" | "down") => {
-        console.log('You swiped: ' + direction)
+        info('You swiped: ' + direction)
         if (direction === "right") {
             handlePass();
         } else if (direction === "left") {

@@ -123,7 +123,8 @@ pub mod tests {
                 ..Default::default()
             };
 
-            db.insert(&flashcard.id.to_string(), flashcard).map_err(|e| e.to_string())?;
+            db.insert(&flashcard.id.to_string(), flashcard)
+                .map_err(|e| e.to_string())?;
         }
 
         // assert

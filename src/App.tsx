@@ -3,7 +3,7 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import FlashcardScreen from "./screens/FlashcardScreen";
 import { ButtonAppBar } from "./components/AppBar";
-import { Container, createTheme, CssBaseline, PaletteMode, ThemeProvider } from "@mui/material";
+import { createTheme, CssBaseline, PaletteMode, ThemeProvider } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 
 const router = createBrowserRouter([
