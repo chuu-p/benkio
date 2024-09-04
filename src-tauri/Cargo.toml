@@ -1,5 +1,5 @@
 [package]
-name = "voxab"
+name = "benkio"
 version = "0.0.1"
 description = "A mobile app for language learning."
 authors = ["gxjb"]
@@ -8,7 +8,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "voxab_lib"
+name = "benkio_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]

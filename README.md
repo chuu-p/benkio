@@ -1,4 +1,4 @@
-# voxab
+# benkio
 
 Mobile app for language learning.
 
@@ -68,7 +68,7 @@ And [kiwibrowser](https://play.google.com/store/apps/details?id=com.kiwibrowser.
 
 firefox mobile+asbplayer  should be the best option for ios
 
-- mobile browser firefox with voxab addon -> login to netflix or crunchyroll
+- mobile browser firefox with benkio addon -> login to netflix or crunchyroll
 - when floating button is pressed -> screenshot -> extract subtitles from page source 
   - create card from subtitles -> dictionary entry -> etc.
 - ~maybe fork mobile firefox as module for this app~

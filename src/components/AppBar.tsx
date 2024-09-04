@@ -19,7 +19,7 @@ export function ButtonAppBar() {
           </IconButton>
 
           <Typography variant="h6" component="div" fontFamily={"monospace"} sx={{ flexGrow: 1 }} textAlign="center">
-            voxab
+            benkio
           </Typography>
 
           <IconButton

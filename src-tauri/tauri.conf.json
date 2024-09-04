@@ -1,7 +1,7 @@
 {
-  "productName": "voxab",
+  "productName": "benkio",
   "version": "0.0.1",
-  "identifier": "se.genos.voxab",
+  "identifier": "se.genos.benkio",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "voxab",
+        "title": "benkio",
         "width": 415,
         "height": 890,
         "x": 0,

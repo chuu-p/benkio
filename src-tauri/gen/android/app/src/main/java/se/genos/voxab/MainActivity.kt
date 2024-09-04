@@ -1,3 +1,3 @@
-package se.genos.voxab
+package se.genos.benkio
 
 class MainActivity : TauriActivity()
