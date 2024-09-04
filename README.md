@@ -62,6 +62,12 @@ only do 20 new cards per day -> extra counter per day
 
 #### sentence mining with netflix/crunchyroll anime series
 
+This can work on mobile with [asbplayer](https://chromewebstore.google.com/detail/asbplayer-language-learni/hkledmpjpaehamkiehglnbelcpdflcab) [killergerbah/asbplayer](https://github.com/killergerbah/asbplayer)
+And [kiwibrowser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser&hl=en)
+-> this works only on android
+
+firefox mobile+asbplayer  should be the best option for ios
+
 - mobile browser firefox with voxab addon -> login to netflix or crunchyroll
 - when floating button is pressed -> screenshot -> extract subtitles from page source 
   - create card from subtitles -> dictionary entry -> etc.

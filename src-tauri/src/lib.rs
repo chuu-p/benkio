@@ -1,13 +1,14 @@
 mod db;
-// mod flashcard;
 pub mod models;
 pub mod schema;
 
 use chrono::{Duration, Utc};
 use diesel::prelude::*;
+use diesel::SqliteConnection;
 use log::{info, LevelFilter};
-
 use models::{Flashcard, NewCard};
+use schema::flashcards;
+use std::collections::VecDeque;
 use tauri_plugin_log::{Target, TargetKind};
 
 #[tauri::command]
@@ -21,7 +22,11 @@ fn get_flashcards_for_today() -> String {
     json
 }
 
-pub fn create_card(conn: &mut SqliteConnection, content_front: &str, content_back: &str) -> Flashcard{
+pub fn create_card(
+    conn: &mut SqliteConnection,
+    content_front: &str,
+    content_back: &str,
+) -> Flashcard {
     use crate::schema::flashcards;
 
     let new_card = NewCard {
@@ -36,6 +41,97 @@ pub fn create_card(conn: &mut SqliteConnection, content_front: &str, content_bac
         .returning(Flashcard::as_returning())
         .get_result(conn)
         .expect("Error saving new flashcard")
+}
+
+const PASS_FACTOR: f32 = 2.5;
+const FAIL_FACTOR: f32 = 0.75;
+const INITIAL_INTERVAL: i32 = 1;
+const MAX_NEW_CARDS_PER_DAY: usize = 20;
+
+impl Flashcard {
+    fn update(&mut self, passed: bool) {
+        self.interval = {
+            let factor = if passed { PASS_FACTOR } else { FAIL_FACTOR };
+            (self.interval as f32 * factor).ceil() as i32
+        };
+        self.next_review = Utc::now().naive_utc() + Duration::days(self.interval as i64);
+    }
+}
+
+#[derive(Debug)]
+struct Deck {
+    cards: VecDeque<Flashcard>,
+    learning_queue: VecDeque<Flashcard>,
+}
+
+impl Deck {
+    fn load_from_db(conn: &SqliteConnection) -> Self {
+        // let results = flashcards
+        //     .limit(5)
+        //     .select(Flashcard::as_select())
+        //     .load(conn)
+        //     .expect("Error loading posts");
+
+        // println!("Displaying {} posts", results.len());
+        // for flashcard in results {
+        //     println!("{}", flashcard.content_front);
+        //     println!("{}", flashcard.content_back);
+        //     println!("-----------");
+        // }
+
+        Deck {
+            cards: VecDeque::new(),
+            learning_queue: VecDeque::new(),
+        };
+
+        todo!()
+    }
+
+    async fn save_to_db(&self, conn: &SqliteConnection) {
+        // for card in &self.cards {
+        //     if card.id.is_none() {
+        //         sqlx::query!(
+        //             "INSERT INTO flashcards (content, interval, next_review) VALUES (?, ?, ?)",
+        //             card.content, card.interval, card.next_review
+        //         )
+        //         .execute(pool)
+        //         .await
+        //         .unwrap();
+        //     } else {
+        //         sqlx::query!(
+        //             "UPDATE flashcards SET content = ?, interval = ?, next_review = ? WHERE id = ?",
+        //             card.content, card.interval, card.next_review, card.id
+        //         )
+        //         .execute(pool)
+        //         .await
+        //         .unwrap();
+        //     }
+        // }
+        todo!()
+    }
+
+    // fn learn_day(&mut self) {
+    //     let mut new_cards_today = 0;
+
+    //     for card in &mut self.cards {
+    //         if card.next_review <= Utc::now().naive_utc() {
+    //             let passed = rand::random::<bool>();
+    //             card.update(passed);
+    //             println!(
+    //                 "Reviewed: {:?}, Passed: {}, Next Review: {:?}",
+    //                 card.content_front, passed, card.next_review
+    //             );
+    //         }
+    //     }
+
+    //     while new_cards_today < MAX_NEW_CARDS_PER_DAY && !self.learning_queue.is_empty() {
+    //         let mut card = self.learning_queue.pop_front().unwrap();
+    //         let passed = true;
+    //         card.update(passed);
+    //         self.cards.push_back(card);
+    //         new_cards_today += 1;
+    //     }
+    // }
 }
 
 #[cfg(test)]
@@ -78,9 +174,9 @@ mod tests {
             .limit(5)
             .select(Flashcard::as_select())
             .load(connection)
-            .expect("Error loading posts");
+            .expect("Error loading cards");
 
-        println!("Displaying {} posts", results.len());
+        println!("Displaying {} cards", results.len());
         for flashcard in results {
             println!("{}", flashcard.content_front);
             println!("{}", flashcard.content_back);
