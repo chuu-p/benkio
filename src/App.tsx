@@ -27,13 +27,6 @@ export const getDesignTokens = (mode: PaletteMode) => ({
 });
 
 function App() {
-  // const [greetMsg, setGreetMsg] = useState("");
-  // const [name, setName] = useState("");
-
-  // async function greet() {
-  //   // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-  //   setGreetMsg(await invoke("greet", { name }));
-  // }
   const [mode, _setMode] = useState<PaletteMode>("dark");
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
 
@@ -45,16 +38,6 @@ function App() {
         <RouterProvider router={router} />
       </ThemeProvider>
     </>
-
-    // <Router location={""} navigator={undefined}>
-    //   
-    //   <Routes>
-    //     <Route path="/" element={} />
-    //   </Routes>
-    //   {/* <LabelBottomNavigation /> */}
-    // </Router>
-
-
   );
 }
 

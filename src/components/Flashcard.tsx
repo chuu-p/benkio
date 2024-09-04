@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, Typography, Button, Stack } from '@mui/material';
+import { Card, CardContent, Typography, Button, Stack, Container } from '@mui/material';
 
 interface FlashcardProps {
     sideA: string;
@@ -28,9 +28,10 @@ function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
     return (
         // FIXME position absolute is not working
         <Card
-            sx={{ position: "absolute", maxWidth: "90vw", minHeight: "90vh", margin: '20px auto', padding: 2 }}
+            sx={{ maxWidth: "90vw", minHeight: "90vh", margin: '20px auto', padding: 2 }}
             onClick={handleShowAnswer}
         >
+            <Container sx={{ position: "absolute"}}>
             <CardContent>
                 <Typography variant="h5">
                     {sideA}
@@ -55,6 +56,7 @@ function Flashcard({ sideA, sideB, onPass, onFail }: FlashcardProps) {
                     </>
                 )}
             </Stack>
+            </Container>
         </Card>
     );
 }
